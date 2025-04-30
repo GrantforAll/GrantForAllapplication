@@ -26,6 +26,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            
         }
 
         label {
@@ -36,7 +37,7 @@
 
         input,
         select {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin-top: 5px;
             border-radius: 5px;
@@ -83,7 +84,7 @@
 
     <form id="deliveryForm" action="https://formspree.io/f/xnndjlqq" method="POST">
         <input type="hidden" name="_redirect" value="https://grantforall.github.io/GrantForAllapplication/thankyou.html">
-        <label> Full Name</label>rgithubu
+        <label> Full Name</label>
         <input type="text" name="Full Name" required>
 
         <label> Street Address</label>
@@ -177,17 +178,36 @@
     <script>
         const form = document.getElementById('deliveryForm');
         const submitBtn = document.getElementById('submitBtn');
-
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                alert('Please fill out all required fields correctly.');
+      
+        form.addEventListener('submit', function(event) {
+          event.preventDefault(); // Prevent the default form submission
+          
+          // Disable the submit button and change its text
+          submitBtn.textContent = 'Submitting...';
+          submitBtn.classList.add('submitting');
+          
+          // Collect the form data
+          const formData = new FormData(form);
+          
+          // Submit the form via Fetch to Formspree
+          fetch('https://formspree.io/f/xnndjlqq', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (response.ok) {
+              // Redirect to the thank you page if successful
+              window.location.href = 'thankyou.html'; // Update with the correct URL if needed
             } else {
-                submitBtn.textContent = 'Submitting...';
-                submitBtn.classList.add('submitting');
+              alert('There was an issue submitting your form. Please try again.');
             }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting the form. Please try again.');
+          });
         });
-    </script>
+      </script>
 
 </body>
 
