@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GrantFor All Delivery Application</title>
-    <link rel="stylesheet" href="thankyou.html">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -82,11 +81,9 @@
 
     <h1>GrantFor All Delivery Application</h1>
 
-    <form action="https://formspree.io/f/xnndjlqq" method="POST">
-        <input type="hidden" name="_redirect"
-            value="https://grantforall.github.io/GrantForAllapplication/thankyou.html">
-
-        <label> Full Name</label>
+    <form id="deliveryForm" action="https://formspree.io/f/xnndjlqq" method="POST">
+        <input type="hidden" name="_redirect" value="https://grantforall.github.io/GrantForAllapplication/thankyou.html">
+        <label> Full Name</label>rgithubu
         <input type="text" name="Full Name" required>
 
         <label> Street Address</label>
@@ -172,14 +169,10 @@
         <label> Monthly Income</label>
         <input type="text" name="Monthly Income" required>
 
-        <input type="hidden" name="_redirect"
-            value="https://grantforall.github.io/GrantForAllapplication/thankyou.html">
+        <input type="hidden" name="_next" value="thankyou.html">
 
         <button type="submit" id="submitBtn">Submit Application</button>
     </form>
-    <!-- your fields here -->
-    </form>
-
 
     <script>
         const form = document.getElementById('deliveryForm');
