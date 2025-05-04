@@ -137,7 +137,31 @@
             margin: 0;
             width: auto;
         }
-        
+
+        /* Validation Styles */
+        input.invalid, select.invalid {
+            border-color: #e74c3c !important;
+        }
+
+        input.valid, select.valid {
+            border-color: #28B463 !important;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .conditional-field {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #2E86C1;
+        }
+
         @media (max-width: 768px) {
             .application-container {
                 padding: 20px;
@@ -177,6 +201,49 @@
                         <option value="business">Business Grant</option>
                         <option value="rent_house">Rent House Grant</option>
                     </select>
+                </div>
+
+                <!-- Conditional Fields -->
+                <div id="disability_details" class="conditional-field">
+                    <h3>Disability Details</h3>
+                    <div class="form-group">
+                        <label for="disability_type">Type of Disability</label>
+                        <input type="text" id="disability_type" name="disability_type">
+                    </div>
+                    <div class="form-group">
+                        <label for="disability_document">Disability Documentation Number</label>
+                        <input type="text" id="disability_document" name="disability_document">
+                    </div>
+                </div>
+
+                <div id="business_details" class="conditional-field">
+                    <h3>Business Details</h3>
+                    <div class="form-group">
+                        <label for="business_name">Business Name</label>
+                        <input type="text" id="business_name" name="business_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="business_type">Business Type</label>
+                        <input type="text" id="business_type" name="business_type">
+                    </div>
+                </div>
+
+                <div id="housing_details" class="conditional-field">
+                    <h3>Housing Details</h3>
+                    <div class="form-group">
+                        <label for="housing_type">Type of Housing</label>
+                        <select id="housing_type" name="housing_type">
+                            <option value="">-- Select Housing Type --</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="house">Single Family Home</option>
+                            <option value="condo">Condo</option>
+                            <option value="townhouse">Townhouse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monthly_rent">Monthly Rent/Mortgage ($)</label>
+                        <input type="number" id="monthly_rent" name="monthly_rent" min="0">
+                    </div>
                 </div>
             </div>
             
@@ -339,5 +406,214 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            // 1. Form Validation with Real-time Feedback
+            inputs.forEach(input => {
+                input.addEventListener('blur', validateField);
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    input.addEventListener('change', validateField);
+                }
+            });
+            
+            function validateField(e) {
+                const field = e.target;
+                const errorElement = field.nextElementSibling;
+                
+                // Remove existing error message if it exists
+                if (errorElement && errorElement.classList.contains('error-message')) {
+                    errorElement.remove();
+                }
+                
+                // Validate required fields
+                if (field.hasAttribute('required') && !field.value.trim() && 
+                    !(field.type === 'checkbox' && field.checked)) {
+                    showError(field, 'This field is required');
+                    return;
+                }
+                
+                // Specific validations
+                if (field.id === 'email' && !isValidEmail(field.value)) {
+                    showError(field, 'Please enter a valid email address');
+                    return;
+                }
+                
+                if (field.id === 'phone' && !isValidPhone(field.value)) {
+                    showError(field, 'Please enter a valid phone number');
+                    return;
+                }
+                
+                if (field.id === 'age' && field.value < 18) {
+                    showError(field, 'You must be at least 18 years old');
+                    return;
+                }
+                
+                // If validation passes, add valid class
+                field.classList.add('valid');
+                field.classList.remove('invalid');
+            }
+            
+            function showError(field, message) {
+                field.classList.remove('valid');
+                field.classList.add('invalid');
+                
+                const errorElement = document.createElement('div');
+                errorElement.className = 'error-message';
+                errorElement.textContent = message;
+                
+                // Insert after the field or its container for radio/checkbox
+                if (field.type === 'radio' || field.type === 'checkbox') {
+                    field.closest('.form-group').appendChild(errorElement);
+                } else {
+                    field.parentNode.insertBefore(errorElement, field.nextSibling);
+                }
+            }
+            
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+            
+            function isValidPhone(phone) {
+                return /^[\d\s\-\(\)]{10,}$/.test(phone);
+            }
+            
+            // 2. Dynamic Form Behavior Based on Grant Selection
+            const grantTypeSelect = document.getElementById('grant_type');
+            grantTypeSelect.addEventListener('change', function() {
+                // Hide all conditional fields first
+                document.querySelectorAll('.conditional-field').forEach(field => {
+                    field.style.display = 'none';
+                    field.querySelectorAll('input, select').forEach(input => {
+                        input.removeAttribute('required');
+                    });
+                });
+                
+                // Show fields based on selection and make required
+                switch(this.value) {
+                    case 'disabled':
+                        const disabilityFields = document.getElementById('disability_details');
+                        disabilityFields.style.display = 'block';
+                        disabilityFields.querySelectorAll('input').forEach(input => {
+                            input.setAttribute('required', '');
+                        });
+                        break;
+                    case 'business':
+                        const businessFields = document.getElementById('business_details');
+                        businessFields.style.display = 'block';
+                        businessFields.querySelectorAll('input').forEach(input => {
+                            input.setAttribute('required', '');
+                        });
+                        break;
+                    case 'home':
+                    case 'rent_house':
+                        const housingFields = document.getElementById('housing_details');
+                        housingFields.style.display = 'block';
+                        housingFields.querySelectorAll('input, select').forEach(input => {
+                            input.setAttribute('required', '');
+                        });
+                        break;
+                }
+            });
+            
+            // 3. Auto-formatting for Phone Number
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function(e) {
+                // Remove all non-digit characters
+                let phoneNumber = this.value.replace(/\D/g, '');
+                
+                // Format as (XXX) XXX-XXXX
+                if (phoneNumber.length > 3 && phoneNumber.length <= 6) {
+                    phoneNumber = `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3)}`;
+                } else if (phoneNumber.length > 6) {
+                    phoneNumber = `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6, 10)}`;
+                }
+                
+                this.value = phoneNumber;
+            });
+            
+            // 4. Age Calculation from Date of Birth
+            const dobInput = document.getElementById('dob');
+            const ageInput = document.getElementById('age');
+            
+            dobInput.addEventListener('change', function() {
+                const dob = new Date(this.value);
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const monthDiff = today.getMonth() - dob.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                
+                ageInput.value = age;
+                validateField({ target: ageInput });
+            });
+            
+            // 5. Form Submission Handling with Loading State
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate all fields before submission
+                let isValid = true;
+                inputs.forEach(input => {
+                    const event = new Event('blur');
+                    input.dispatchEvent(event);
+                    if (input.classList.contains('invalid')) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Please correct the errors in the form before submitting.');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = form.querySelector('.submit-btn');
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+                submitBtn.style.opacity = '0.7';
+                
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        form.innerHTML = `
+                            <div class="success-message" style="text-align: center; padding: 30px;">
+                                <h2 style="color: #28B463;">Application Submitted Successfully!</h2>
+                                <p>Thank you for your application. We've received your information and will process your request shortly.</p>
+                                <p>A confirmation email has been sent to ${document.getElementById('email').value}.</p>
+                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #2E86C1; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                    Submit Another Application
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('Form submission failed');
+                    }
+                } catch (error) {
+                    alert('There was an error submitting your form. Please try again later.');
+                    console.error('Form submission error:', error);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalBtnText;
+                    submitBtn.style.opacity = '1';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
