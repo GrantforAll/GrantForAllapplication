@@ -137,31 +137,58 @@
             margin: 0;
             width: auto;
         }
-
-        /* Validation Styles */
-        input.invalid, select.invalid {
-            border-color: #e74c3c !important;
-        }
-
-        input.valid, select.valid {
-            border-color: #28B463 !important;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .conditional-field {
+        
+        /* Thank You Page Styles */
+        .thank-you-page {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #2E86C1;
+            text-align: center;
+            padding: 40px;
         }
-
+        
+        .thank-you-icon {
+            width: 80px;
+            height: 80px;
+            fill: #28B463;
+            margin-bottom: 20px;
+        }
+        
+        .thank-you-title {
+            color: #2E86C1;
+            margin-bottom: 15px;
+        }
+        
+        .application-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .next-steps {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .new-application-btn {
+            background-color: #2E86C1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .new-application-btn:hover {
+            background-color: #1a6ca8;
+        }
+        
         @media (max-width: 768px) {
             .application-container {
                 padding: 20px;
@@ -176,442 +203,272 @@
 </head>
 <body>
     <div class="application-container">
-        <div class="header">
-            <h1>GrantForAll Application</h1>
-            <p>Select the grant you need and provide your information</p>
-        </div>
-        
-        <form action="https://formspree.io/f/xnndjlqq" method="POST">
-            <!-- Grant Selection -->
-            <div class="form-section">
-                <h2 class="section-title">1. Select Grant Type</h2>
-                
-                <div class="form-group">
-                    <label for="grant_type" class="required">Choose the grant you need</label>
-                    <select id="grant_type" name="grant_type" required>
-                        <option value="">-- Select Grant --</option>
-                        <option value="personal">Personal Grant</option>
-                        <option value="home">Home Grant</option>
-                        <option value="disabled">Disabled Grant</option>
-                        <option value="widow">Widow Grant</option>
-                        <option value="unemployed">Unemployed Grant</option>
-                        <option value="retired">Retired Grant</option>
-                        <option value="working">Working Grant</option>
-                        <option value="own_house">Own House Grant</option>
-                        <option value="business">Business Grant</option>
-                        <option value="rent_house">Rent House Grant</option>
-                    </select>
-                </div>
-
-                <!-- Conditional Fields -->
-                <div id="disability_details" class="conditional-field">
-                    <h3>Disability Details</h3>
+        <!-- Application Form (initially visible) -->
+        <div id="application-form">
+            <div class="header">
+                <h1>GrantForAll Application</h1>
+                <p>Select the grant you need and provide your information</p>
+            </div>
+            
+            <form id="grantForm">
+                <!-- Grant Selection -->
+                <div class="form-section">
+                    <h2 class="section-title">1. Select Grant Type</h2>
+                    
                     <div class="form-group">
-                        <label for="disability_type">Type of Disability</label>
-                        <input type="text" id="disability_type" name="disability_type">
-                    </div>
-                    <div class="form-group">
-                        <label for="disability_document">Disability Documentation Number</label>
-                        <input type="text" id="disability_document" name="disability_document">
-                    </div>
-                </div>
-
-                <div id="business_details" class="conditional-field">
-                    <h3>Business Details</h3>
-                    <div class="form-group">
-                        <label for="business_name">Business Name</label>
-                        <input type="text" id="business_name" name="business_name">
-                    </div>
-                    <div class="form-group">
-                        <label for="business_type">Business Type</label>
-                        <input type="text" id="business_type" name="business_type">
-                    </div>
-                </div>
-
-                <div id="housing_details" class="conditional-field">
-                    <h3>Housing Details</h3>
-                    <div class="form-group">
-                        <label for="housing_type">Type of Housing</label>
-                        <select id="housing_type" name="housing_type">
-                            <option value="">-- Select Housing Type --</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="house">Single Family Home</option>
-                            <option value="condo">Condo</option>
-                            <option value="townhouse">Townhouse</option>
+                        <label for="grant_type" class="required">Choose the grant you need</label>
+                        <select id="grant_type" name="grant_type" required>
+                            <option value="">-- Select Grant --</option>
+                            <option value="personal">Personal Grant</option>
+                            <option value="home">Home Grant</option>
+                            <option value="disabled">Disabled Grant</option>
+                            <option value="widow">Widow Grant</option>
+                            <option value="unemployed">Unemployed Grant</option>
+                            <option value="retired">Retired Grant</option>
+                            <option value="working">Working Grant</option>
+                            <option value="own_house">Own House Grant</option>
+                            <option value="business">Business Grant</option>
+                            <option value="rent_house">Rent House Grant</option>
                         </select>
                     </div>
+                </div>
+                
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h2 class="section-title">2. Personal Information</h2>
+                    
                     <div class="form-group">
-                        <label for="monthly_rent">Monthly Rent/Mortgage ($)</label>
-                        <input type="number" id="monthly_rent" name="monthly_rent" min="0">
+                        <label for="full_name" class="required">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" required>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Personal Information -->
-            <div class="form-section">
-                <h2 class="section-title">2. Personal Information</h2>
-                
-                <div class="form-group">
-                    <label for="full_name" class="required">Full Name</label>
-                    <input type="text" id="full_name" name="full_name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dob" class="required">Date of Birth</label>
-                    <input type="date" id="dob" name="dob" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="address" class="required">Street Address</label>
-                    <input type="text" id="address" name="address" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email" class="required">Email Address</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="state" class="required">State</label>
-                    <select id="state" name="state" required>
-                        <option value="">-- Select State --</option>
-                        <option value="AL">Alabama</option>
-                        <option value="AK">Alaska</option>
-                        <option value="AZ">Arizona</option>
-                        <option value="AR">Arkansas</option>
-                        <option value="CA">California</option>
-                        <option value="CO">Colorado</option>
-                        <option value="CT">Connecticut</option>
-                        <option value="DE">Delaware</option>
-                        <option value="FL">Florida</option>
-                        <option value="GA">Georgia</option>
-                        <option value="HI">Hawaii</option>
-                        <option value="ID">Idaho</option>
-                        <option value="IL">Illinois</option>
-                        <option value="IN">Indiana</option>
-                        <option value="IA">Iowa</option>
-                        <option value="KS">Kansas</option>
-                        <option value="KY">Kentucky</option>
-                        <option value="LA">Louisiana</option>
-                        <option value="ME">Maine</option>
-                        <option value="MD">Maryland</option>
-                        <option value="MA">Massachusetts</option>
-                        <option value="MI">Michigan</option>
-                        <option value="MN">Minnesota</option>
-                        <option value="MS">Mississippi</option>
-                        <option value="MO">Missouri</option>
-                        <option value="MT">Montana</option>
-                        <option value="NE">Nebraska</option>
-                        <option value="NV">Nevada</option>
-                        <option value="NH">New Hampshire</option>
-                        <option value="NJ">New Jersey</option>
-                        <option value="NM">New Mexico</option>
-                        <option value="NY">New York</option>
-                        <option value="NC">North Carolina</option>
-                        <option value="ND">North Dakota</option>
-                        <option value="OH">Ohio</option>
-                        <option value="OK">Oklahoma</option>
-                        <option value="OR">Oregon</option>
-                        <option value="PA">Pennsylvania</option>
-                        <option value="RI">Rhode Island</option>
-                        <option value="SC">South Carolina</option>
-                        <option value="SD">South Dakota</option>
-                        <option value="TN">Tennessee</option>
-                        <option value="TX">Texas</option>
-                        <option value="UT">Utah</option>
-                        <option value="VT">Vermont</option>
-                        <option value="VA">Virginia</option>
-                        <option value="WA">Washington</option>
-                        <option value="WV">West Virginia</option>
-                        <option value="WI">Wisconsin</option>
-                        <option value="WY">Wyoming</option>
-                    </select>
-                </div>
-                
-                <!-- Improved Gender Selection -->
-                <div class="form-group">
-                    <label class="required">Gender</label>
-                    <div class="gender-options">
-                        <div class="gender-option">
-                            <input type="radio" id="male" name="gender" value="male" required>
-                            <label for="male">Male</label>
-                        </div>
-                        <div class="gender-option">
-                            <input type="radio" id="female" name="gender" value="female">
-                            <label for="female">Female</label>
+                    
+                    <div class="form-group">
+                        <label for="dob" class="required">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address" class="required">Street Address</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="state" class="required">State</label>
+                        <select id="state" name="state" required>
+                            <option value="">-- Select State --</option>
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Improved Gender Selection -->
+                    <div class="form-group">
+                        <label class="required">Gender</label>
+                        <div class="gender-options">
+                            <div class="gender-option">
+                                <input type="radio" id="male" name="gender" value="male" required>
+                                <label for="male">Male</label>
+                            </div>
+                            <div class="gender-option">
+                                <input type="radio" id="female" name="gender" value="female">
+                                <label for="female">Female</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="age" class="required">Age</label>
-                    <input type="number" id="age" name="age" min="18" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone" class="required">Telephone Number</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-            </div>
-            
-            <!-- Financial Information -->
-            <div class="form-section">
-                <h2 class="section-title">3. Financial Information</h2>
-                
-                <div class="form-group">
-                    <label for="cash_at_hand" class="required">Cash At Hand ($)</label>
-                    <input type="number" id="cash_at_hand" name="cash_at_hand" min="0" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="occupation" class="required">Occupation</label>
-                    <input type="text" id="occupation" name="occupation" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="monthly_income" class="required">Monthly Income ($)</label>
-                    <input type="number" id="monthly_income" name="monthly_income" min="0" required>
-                </div>
-            </div>
-            
-            <!-- Additional Information -->
-            <div class="form-section">
-                <h2 class="section-title">4. Additional Information</h2>
-                
-                <div class="form-group">
-                    <label for="how_heard">How did you hear about our program?</label>
-                    <select id="how_heard" name="how_heard">
-                        <option value="">-- Select Option --</option>
-                        <option value="friend">Friend/Family</option>
-                        <option value="social">Social Media</option>
-                        <option value="advertisement">Advertisement</option>
-                        <option value="community">Community Organization</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="privacy-notice">
-                    <h3>Privacy Notice</h3>
-                    <p>All information provided will be kept confidential and used solely for the purpose of evaluating your grant application. We will never share your personal information with third parties without your consent, except as required by law.</p>
-                </div>
-                
-                <div class="form-group">
-                    <div class="certify-container">
-                        <input type="checkbox" id="consent" name="consent" required>
-                        <label for="consent" class="required">I certify that all information provided is true and accurate</label>
+                    
+                    <div class="form-group">
+                        <label for="age" class="required">Age</label>
+                        <input type="number" id="age" name="age" min="18" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="required">Telephone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn">Submit Application</button>
+                <!-- Financial Information -->
+                <div class="form-section">
+                    <h2 class="section-title">3. Financial Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="cash_at_hand" class="required">Cash At Hand ($)</label>
+                        <input type="number" id="cash_at_hand" name="cash_at_hand" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupation" class="required">Occupation</label>
+                        <input type="text" id="occupation" name="occupation" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="monthly_income" class="required">Monthly Income ($)</label>
+                        <input type="number" id="monthly_income" name="monthly_income" min="0" required>
+                    </div>
+                </div>
+                
+                <!-- Additional Information -->
+                <div class="form-section">
+                    <h2 class="section-title">4. Additional Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="how_heard">How did you hear about our program?</label>
+                        <select id="how_heard" name="how_heard">
+                            <option value="">-- Select Option --</option>
+                            <option value="friend">Friend/Family</option>
+                            <option value="social">Social Media</option>
+                            <option value="advertisement">Advertisement</option>
+                            <option value="community">Community Organization</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="privacy-notice">
+                        <h3>Privacy Notice</h3>
+                        <p>All information provided will be kept confidential and used solely for the purpose of evaluating your grant application. We will never share your personal information with third parties without your consent, except as required by law.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="certify-container">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <label for="consent" class="required">I certify that all information provided is true and accurate</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Submit Application</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Thank You Page (initially hidden) -->
+        <div id="thank-you-page" class="thank-you-page">
+            <svg class="thank-you-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            
+            <h2 class="thank-you-title">Thank You for Your Application!</h2>
+            <p>We've received your grant application and will review it shortly.</p>
+            
+            <div class="application-summary" id="application-summary">
+                <!-- Dynamically filled by JavaScript -->
             </div>
-        </form>
+            
+            <div class="next-steps">
+                <h3>What Happens Next?</h3>
+                <ul>
+                    <li>You'll receive a confirmation email within 24 hours</li>
+                    <li>Our team will review your application in 3-5 business days</li>
+                    <li>We may contact you for additional information if needed</li>
+                </ul>
+            </div>
+            
+            <button class="new-application-btn" id="new-application-btn">Submit Another Application</button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const inputs = form.querySelectorAll('input, select, textarea');
+            const form = document.getElementById('grantForm');
+            const applicationForm = document.getElementById('application-form');
+            const thankYouPage = document.getElementById('thank-you-page');
+            const applicationSummary = document.getElementById('application-summary');
+            const newAppBtn = document.getElementById('new-application-btn');
             
-            // 1. Form Validation with Real-time Feedback
-            inputs.forEach(input => {
-                input.addEventListener('blur', validateField);
-                if (input.type === 'radio' || input.type === 'checkbox') {
-                    input.addEventListener('change', validateField);
-                }
-            });
-            
-            function validateField(e) {
-                const field = e.target;
-                const errorElement = field.nextElementSibling;
-                
-                // Remove existing error message if it exists
-                if (errorElement && errorElement.classList.contains('error-message')) {
-                    errorElement.remove();
-                }
-                
-                // Validate required fields
-                if (field.hasAttribute('required') && !field.value.trim() && 
-                    !(field.type === 'checkbox' && field.checked)) {
-                    showError(field, 'This field is required');
-                    return;
-                }
-                
-                // Specific validations
-                if (field.id === 'email' && !isValidEmail(field.value)) {
-                    showError(field, 'Please enter a valid email address');
-                    return;
-                }
-                
-                if (field.id === 'phone' && !isValidPhone(field.value)) {
-                    showError(field, 'Please enter a valid phone number');
-                    return;
-                }
-                
-                if (field.id === 'age' && field.value < 18) {
-                    showError(field, 'You must be at least 18 years old');
-                    return;
-                }
-                
-                // If validation passes, add valid class
-                field.classList.add('valid');
-                field.classList.remove('invalid');
-            }
-            
-            function showError(field, message) {
-                field.classList.remove('valid');
-                field.classList.add('invalid');
-                
-                const errorElement = document.createElement('div');
-                errorElement.className = 'error-message';
-                errorElement.textContent = message;
-                
-                // Insert after the field or its container for radio/checkbox
-                if (field.type === 'radio' || field.type === 'checkbox') {
-                    field.closest('.form-group').appendChild(errorElement);
-                } else {
-                    field.parentNode.insertBefore(errorElement, field.nextSibling);
-                }
-            }
-            
-            function isValidEmail(email) {
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-            }
-            
-            function isValidPhone(phone) {
-                return /^[\d\s\-\(\)]{10,}$/.test(phone);
-            }
-            
-            // 2. Dynamic Form Behavior Based on Grant Selection
-            const grantTypeSelect = document.getElementById('grant_type');
-            grantTypeSelect.addEventListener('change', function() {
-                // Hide all conditional fields first
-                document.querySelectorAll('.conditional-field').forEach(field => {
-                    field.style.display = 'none';
-                    field.querySelectorAll('input, select').forEach(input => {
-                        input.removeAttribute('required');
-                    });
-                });
-                
-                // Show fields based on selection and make required
-                switch(this.value) {
-                    case 'disabled':
-                        const disabilityFields = document.getElementById('disability_details');
-                        disabilityFields.style.display = 'block';
-                        disabilityFields.querySelectorAll('input').forEach(input => {
-                            input.setAttribute('required', '');
-                        });
-                        break;
-                    case 'business':
-                        const businessFields = document.getElementById('business_details');
-                        businessFields.style.display = 'block';
-                        businessFields.querySelectorAll('input').forEach(input => {
-                            input.setAttribute('required', '');
-                        });
-                        break;
-                    case 'home':
-                    case 'rent_house':
-                        const housingFields = document.getElementById('housing_details');
-                        housingFields.style.display = 'block';
-                        housingFields.querySelectorAll('input, select').forEach(input => {
-                            input.setAttribute('required', '');
-                        });
-                        break;
-                }
-            });
-            
-            // 3. Auto-formatting for Phone Number
-            const phoneInput = document.getElementById('phone');
-            phoneInput.addEventListener('input', function(e) {
-                // Remove all non-digit characters
-                let phoneNumber = this.value.replace(/\D/g, '');
-                
-                // Format as (XXX) XXX-XXXX
-                if (phoneNumber.length > 3 && phoneNumber.length <= 6) {
-                    phoneNumber = `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3)}`;
-                } else if (phoneNumber.length > 6) {
-                    phoneNumber = `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6, 10)}`;
-                }
-                
-                this.value = phoneNumber;
-            });
-            
-            // 4. Age Calculation from Date of Birth
-            const dobInput = document.getElementById('dob');
-            const ageInput = document.getElementById('age');
-            
-            dobInput.addEventListener('change', function() {
-                const dob = new Date(this.value);
-                const today = new Date();
-                let age = today.getFullYear() - dob.getFullYear();
-                const monthDiff = today.getMonth() - dob.getMonth();
-                
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-                    age--;
-                }
-                
-                ageInput.value = age;
-                validateField({ target: ageInput });
-            });
-            
-            // 5. Form Submission Handling with Loading State
-            form.addEventListener('submit', async function(e) {
+            // Form submission handler
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                // Validate all fields before submission
-                let isValid = true;
-                inputs.forEach(input => {
-                    const event = new Event('blur');
-                    input.dispatchEvent(event);
-                    if (input.classList.contains('invalid')) {
-                        isValid = false;
-                    }
-                });
-                
-                if (!isValid) {
-                    alert('Please correct the errors in the form before submitting.');
-                    return;
-                }
                 
                 // Show loading state
                 const submitBtn = form.querySelector('.submit-btn');
-                const originalBtnText = submitBtn.textContent;
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Processing...';
-                submitBtn.style.opacity = '0.7';
                 
-                try {
-                    const formData = new FormData(form);
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
+                // Simulate form processing (replace with actual submission if needed)
+                setTimeout(function() {
+                    // Show thank you page
+                    applicationForm.style.display = 'none';
+                    thankYouPage.style.display = 'block';
                     
-                    if (response.ok) {
-                        // Show success message
-                        form.innerHTML = `
-                            <div class="success-message" style="text-align: center; padding: 30px;">
-                                <h2 style="color: #28B463;">Application Submitted Successfully!</h2>
-                                <p>Thank you for your application. We've received your information and will process your request shortly.</p>
-                                <p>A confirmation email has been sent to ${document.getElementById('email').value}.</p>
-                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #2E86C1; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                    Submit Another Application
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        throw new Error('Form submission failed');
-                    }
-                } catch (error) {
-                    alert('There was an error submitting your form. Please try again later.');
-                    console.error('Form submission error:', error);
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.style.opacity = '1';
-                }
+                    // Populate application summary
+                    applicationSummary.innerHTML = `
+                        <h3>Application Summary</h3>
+                        <p><strong>Name:</strong> ${document.getElementById('full_name').value}</p>
+                        <p><strong>Grant Type:</strong> ${document.getElementById('grant_type').options[document.getElementById('grant_type').selectedIndex].text}</p>
+                        <p><strong>Submitted:</strong> ${new Date().toLocaleDateString()}</p>
+                        <p><strong>Email:</strong> ${document.getElementById('email').value}</p>
+                    `;
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                }, 1500);
+            });
+            
+            // New application button
+            newAppBtn.addEventListener('click', function() {
+                // Reset form
+                form.reset();
+                
+                // Show form and hide thank you page
+                applicationForm.style.display = 'block';
+                thankYouPage.style.display = 'none';
+                
+                // Reset submit button
+                const submitBtn = form.querySelector('.submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Application';
             });
         });
     </script>
