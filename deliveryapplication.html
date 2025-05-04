@@ -77,7 +77,6 @@
             box-sizing: border-box;
         }
         
-        /* Improved Gender Radio Buttons */
         .gender-options {
             display: flex;
             gap: 20px;
@@ -142,51 +141,118 @@
         .thank-you-page {
             display: none;
             text-align: center;
-            padding: 40px;
+            padding: 30px 20px;
         }
         
         .thank-you-icon {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             fill: #28B463;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .thank-you-title {
             color: #2E86C1;
+            font-size: 24px;
             margin-bottom: 15px;
+            line-height: 1.3;
         }
         
-        .application-summary {
+        .thank-you-message {
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .email-display {
+            font-weight: bold;
+            color: #2E86C1;
+            word-break: break-all;
+            margin: 15px 0;
+            font-size: 16px;
+            padding: 12px;
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-            text-align: left;
+            border-radius: 6px;
+            text-align: center;
+            line-height: 1.4;
         }
         
         .next-steps {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 20px 15px;
             border-radius: 8px;
             margin: 25px 0;
             text-align: left;
+        }
+        
+        .next-steps h3 {
+            color: #28B463;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .next-steps ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .next-steps li {
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.4;
         }
         
         .new-application-btn {
             background-color: #2E86C1;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 25px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
             transition: background-color 0.3s;
+            width: 100%;
+            max-width: 300px;
         }
         
         .new-application-btn:hover {
             background-color: #1a6ca8;
+        }
+        
+        @media (min-width: 768px) {
+            .thank-you-page {
+                padding: 40px;
+            }
+            
+            .thank-you-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 20px;
+            }
+            
+            .thank-you-title {
+                font-size: 28px;
+            }
+            
+            .thank-you-message {
+                font-size: 18px;
+            }
+            
+            .email-display {
+                font-size: 18px;
+                padding: 15px;
+            }
+            
+            .next-steps {
+                padding: 25px 20px;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
         
         @media (max-width: 768px) {
@@ -210,7 +276,7 @@
                 <p>Select the grant you need and provide your information</p>
             </div>
             
-            <form id="grantForm">
+            <form id="grantForm" action="https://formspree.io/f/xnndjlqq" method="POST">
                 <!-- Grant Selection -->
                 <div class="form-section">
                     <h2 class="section-title">1. Select Grant Type</h2>
@@ -400,18 +466,21 @@
             </svg>
             
             <h2 class="thank-you-title">Thank You for Your Application!</h2>
-            <p>We've received your grant application and will review it shortly.</p>
             
-            <div class="application-summary" id="application-summary">
-                <!-- Dynamically filled by JavaScript -->
+            <p class="thank-you-message">
+                We've received your grant application and will review it shortly.
+            </p>
+            
+            <div class="email-display" id="confirmation-email">
+                <!-- Email will be inserted here by JavaScript -->
             </div>
             
             <div class="next-steps">
                 <h3>What Happens Next?</h3>
                 <ul>
                     <li>You'll receive a confirmation email within 24 hours</li>
-                    <li>Our team will review your application in 3-5 business days</li>
-                    <li>We may contact you for additional information if needed</li>
+                    <li>Our team will review your application in 1-3 business days</li>
+                    <li>We may contact you if additional information is needed</li>
                 </ul>
             </div>
             
@@ -424,7 +493,7 @@
             const form = document.getElementById('grantForm');
             const applicationForm = document.getElementById('application-form');
             const thankYouPage = document.getElementById('thank-you-page');
-            const applicationSummary = document.getElementById('application-summary');
+            const confirmationEmail = document.getElementById('confirmation-email');
             const newAppBtn = document.getElementById('new-application-btn');
             
             // Form submission handler
@@ -436,24 +505,44 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Processing...';
                 
-                // Simulate form processing (replace with actual submission if needed)
-                setTimeout(function() {
-                    // Show thank you page
-                    applicationForm.style.display = 'none';
-                    thankYouPage.style.display = 'block';
-                    
-                    // Populate application summary
-                    applicationSummary.innerHTML = `
-                        <h3>Application Summary</h3>
-                        <p><strong>Name:</strong> ${document.getElementById('full_name').value}</p>
-                        <p><strong>Grant Type:</strong> ${document.getElementById('grant_type').options[document.getElementById('grant_type').selectedIndex].text}</p>
-                        <p><strong>Submitted:</strong> ${new Date().toLocaleDateString()}</p>
-                        <p><strong>Email:</strong> ${document.getElementById('email').value}</p>
-                    `;
-                    
-                    // Scroll to top
-                    window.scrollTo(0, 0);
-                }, 1500);
+                // Collect form data
+                const formData = new FormData(form);
+                
+                // Submit to Formspree
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Update email display with better mobile formatting
+                        const userEmail = document.getElementById('email').value;
+                        confirmationEmail.innerHTML = `
+                            <div style="margin-bottom: 6px;">Confirmation sent to:</div>
+                            <div style="font-size: 17px; word-break: break-all;">${userEmail}</div>
+                        `;
+                        
+                        // Show thank you page and hide form
+                        applicationForm.style.display = 'none';
+                        thankYouPage.style.display = 'block';
+                        
+                        // Scroll to top
+                        window.scrollTo(0, 0);
+                    } else {
+                        throw new Error('Form submission failed');
+                    }
+                })
+                .catch(error => {
+                    alert('There was an error submitting your form. Please try again later.');
+                    console.error('Form submission error:', error);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Application';
+                });
             });
             
             // New application button
@@ -465,10 +554,8 @@
                 applicationForm.style.display = 'block';
                 thankYouPage.style.display = 'none';
                 
-                // Reset submit button
-                const submitBtn = form.querySelector('.submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Application';
+                // Scroll to top
+                window.scrollTo(0, 0);
             });
         });
     </script>
